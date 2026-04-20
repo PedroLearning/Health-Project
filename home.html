@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,500;0,700;0,800;1,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="style-home.css">
+    <title>Health FAQ - 2026</title>
+</head>
+<body>
+
+    <main class="container-layout">
+        <nav class="nav-bar">
+            <h2 class="logo">FAQ</h2>
+            <div class="lang-selector">
+                <span>ENGLISH</span> <i class="fa-solid fa-chevron-down"></i>
+            </div>
+        </nav>
+
+        <section class="search-section">
+            <div class="search-wrapper">
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                <input type="text" placeholder="Search for your health question..." class="search-input">
+            </div>
+        </section>
+
+        <section class="category-area">
+            <button class="btn btn-cat btn-nutrition">Nutrition</button>
+            <button class="btn btn-cat btn-training">Training</button>
+            <button class="btn btn-cat btn-mental">Mental Health</button>
+            <button class="btn btn-cat btn-prevention">Prevention</button>
+        </section>
+
+        <div class="filter-area">
+            <div class="dropdown">
+                <span class="filter-label">Sort by:</span>
+                <button class="filter-dropdown-btn" type="button" data-bs-toggle="dropdown">
+                    Most Relevant <i class="fa-solid fa-chevron-down"></i>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="#">Most Relevant</a></li>
+                    <li><a class="dropdown-item" href="#">Most Recent</a></li>
+                    <li><a class="dropdown-item" href="#">Plus ancienne</a></li>
+                    <li><a class="dropdown-item" href="#">Most Upvoted</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <section class="faq-section">
+            <div class="faq-item">
+                <details>
+                    <summary> {{ question1 }} <i class="fa-solid fa-chevron-down arrow"></i></summary>
+                    <div class="answer-content">
+                        <p>{{ answer1 }}</p>
+                        <div class="answer-footer">
+                            <span class="group-tag">By: Group -----</span>
+                            <div class="feedback">
+                                <span>Was this helpful?</span>
+                                <button class="btn-like"><i class="fa-solid fa-thumbs-up"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </details>
+            </div>
+            <div class="faq-item"><details><summary>{{ question2 }} <i class="fa-solid fa-chevron-down arrow"></i></summary><div class="answer-content"><p>{{ answer2 }}</p><div class="answer-footer"><span class="group-tag">By: Group -----</span><button class="btn-like"><i class="fa-solid fa-thumbs-up"></i></button></div></div></details></div>
+            <div class="faq-item"><details><summary>{{ question3 }} <i class="fa-solid fa-chevron-down arrow"></i></summary><div class="answer-content"><p>{{ answer3 }}</p><div class="answer-footer"><span class="group-tag">By: Group -----</span><button class="btn-like"><i class="fa-solid fa-thumbs-up"></i></button></div></div></details></div>
+            <div class="faq-item"><details><summary>{{ question4 }} <i class="fa-solid fa-chevron-down arrow"></i></summary><div class="answer-content"><p>{{ answer4 }}</p><div class="answer-footer"><span class="group-tag">By: Group -----</span><button class="btn-like"><i class="fa-solid fa-thumbs-up"></i></button></div></div></details></div>
+            <div class="faq-item"><details><summary>{{ question5 }} <i class="fa-solid fa-chevron-down arrow"></i></summary><div class="answer-content"><p>{{ answer5 }}</p><div class="answer-footer"><span class="group-tag">By: Group -----</span><button class="btn-like"><i class="fa-solid fa-thumbs-up"></i></button></div></div></details></div>
+        </section>
+
+        <section class="quote-area">
+            <div id="quoteCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="5000">
+                <div class="carousel-indicators custom-indicators">
+                    <button type="button" data-bs-target="#quoteCarousel" data-bs-slide-to="0" class="active"></button>
+                    <button type="button" data-bs-target="#quoteCarousel" data-bs-slide-to="1"></button>
+                    <button type="button" data-bs-target="#quoteCarousel" data-bs-slide-to="2"></button>
+                </div>
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <div class="flying-card">
+                            <div class="progress-loader"></div> 
+                            <div class="card-header-quote">
+                                <img src="https://i.pravatar.cc/150?u=doc1" alt="Doctor" class="doctor-photo">
+                                <span class="doctor-name">Dr. Maria Silva</span>
+                            </div>
+                            <p class="quote-text">"Os estudo de agora tem mostrado que qualquer pessoa pode e deve suplementar mesmo que não treine, precisamente pelo desenvolvimento do desempenho cognitívo, pode ter desempneho cognitivo."</p>
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="flying-card">
+                            <div class="progress-loader"></div>
+                            <div class="card-header-quote">
+                                <img src="https://i.pravatar.cc/150?u=doc2" alt="Doctor" class="doctor-photo">
+                                <span class="doctor-name">Dr. Antti Virtanen</span>
+                            </div>
+                            <p class="quote-text">"The principal cause of death is cardiovascular disease. Habits where sugar is the exception are the best investment for your life."</p>
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="flying-card">
+                            <div class="progress-loader"></div>
+                            <div class="card-header-quote">
+                                <img src="https://i.pravatar.cc/150?u=doc3" alt="Doctor" class="doctor-photo">
+                                <span class="doctor-name">Dr. Pekka Korhonen</span>
+                            </div>
+                            <p class="quote-text">"Muscle mass is your metabolic engine. Protect your joints and your future by staying active today."</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="main-footer">
+            <div class="footer-content">
+                <p>Created by Pedro Lopes and Orlean Mpaka</p>
+                <p class="copyright">© 2026 Health Project. All rights reserved.</p>
+            </div>
+        </footer>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
