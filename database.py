@@ -1,7 +1,10 @@
 import sqlite3
 
 conn = sqlite3.connect('FAQHealth.db')
+conn.execute("PRAGMA foreign_keys = ON")
 cursor = conn.cursor()
+
+
 
 def create_tables():
     conn = sqlite3.connect('FAQHealth.db')
@@ -13,22 +16,24 @@ def create_tables():
         grade TEXT DEFAULT NULL);''')
     
     cursor.execute('''
+        CREATE TABLE IF NOT EXISTS categories (
+        id_category INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL UNIQUE,
+        nome TEXT NOT NULL UNIQUE);''')
+    
+    cursor.execute('''
         CREATE TABLE IF NOT EXISTS questions (
         id_question INTEGER PRIMARY KEY AUTOINCREMENT,
-        id_group TINYINT,
-        id_category TINYINT,
+        id_group INTEGER,
+        id_category INTEGER,
         question TEXT,
         answer TEXT,
         pergunta TEXT,
         resposta TEXT,
-        votes TINYINT DEFAULT 0,
+        votes INTEGER DEFAULT 0,
         FOREIGN KEY (id_category) REFERENCES categories(id_category),
         FOREIGN KEY (id_group) REFERENCES groups(id_group));''')
-
-    cursor.execute('''
-        CREATE TABLE IF NOT EXISTS categories (
-        id_category INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT NOT NULL UNIQUE);''')
+    
     conn.commit()
     conn.close()
 
@@ -68,13 +73,13 @@ def insert_categories():
     conn = sqlite3.connect('FAQHealth.db')
     cursor = conn.cursor()
     cursor.execute('''
-        INSERT INTO categories (name) VALUES
-        ('Mental Health and Socio-Emotional Skills'),
-        ('Affections and Sexuality '),
-        ('Prevention of Additive Behaviors'),
-        ('Healthy Eating and Physical Activity'),
-        ('Body Hygiene and Oral Health'),
-        ('Sleep Habits and Rest');''')
+        INSERT OR IGNORE INTO categories (name, nome) VALUES
+        ('Mental Health and Socio-Emotional Skills', 'Saúde Mental e Habilidades Socio-Emocionais'),
+        ('Affections and Sexuality ', 'Afetividade e Sexualidade'),
+        ('Prevention of Additive Behaviors', 'Prevenção de Comportamentos Aditivos'),
+        ('Healthy Eating and Physical Activity', 'Alimentação Saudável e Atividade Física'),
+        ('Body Hygiene and Oral Health', 'Higiene Corporal e Saúde Bucal'),
+        ('Sleep Habits and Rest', 'Hábitos de Sono e Descanso');''')
     conn.commit()
     conn.close()
 
@@ -164,12 +169,8 @@ def insert_questions():
          'Evitar ambiente onde há consumos de substâncias psicoativas, evitar pessoas que vendem as substâncias e ter muitas atividades (estar ocupado): jogar basquetebol, futebol, atividades extracurriculares, etc...', 
          'What strategies will be effective in preventing substance use psychoactive by young people ?', 
          'Avoid environments where there is consumption of psychoactive substances, avoid people who sell the substances and have many activities (being busy): playing basketball, football, extracurricular activities, etc...');''')                
-                   
-    conn.commit()
 
     # Group 2
-    conn = sqlite3.connect('FAQHealth.db')
-    cursor = conn.cursor()
     
     cursor.execute('''
         INSERT INTO questions (id_group, id_category, pergunta, resposta, question, answer) VALUES
@@ -249,7 +250,7 @@ def insert_questions():
          'Devemos fazer higiene oral profissional regularmente ?', 
          'O recomendado é de 6 em 6 meses, dependendo da saúde oral de cada pessoa.', 
          'Should we have professional oral hygiene regularly ?', 
-         'It is recommended every 6 months, depending on each person"s oral health.'),
+         'It is recommended every 6 months, depending on each person''s oral health.'),
         
         (2, 2, 
          'Com que frequência devemos ir ao ginecologista, sendo jovens ?', 
@@ -263,11 +264,7 @@ def insert_questions():
          'Is it normal to have pain during menstruation in different parts of the body ?', 
          'Yes, pain can be felt in other parts of the body and varies from person to person.');''')
     
-    conn.commit()
-    
     # Group 3
-    conn = sqlite3.connect('FAQHealth.db')
-    cursor = conn.cursor()
 
     cursor.execute('''
         INSERT INTO questions (id_group, id_category, pergunta, resposta, question, answer) VALUES
@@ -342,12 +339,8 @@ def insert_questions():
          'Relações tóxicas podem causar sintomas físicos como insónia, dores de cabeça e problemas digestivos, além de aumentar o risco de ansiedade, depressão e doenças cardiovasculares, devido ao stress crónico.', 
          'Can toxic romantic relationships cause real physical symptoms ?', 
          'Toxic relationships can cause physical symptoms such as insomnia, headaches, and digestive problems, as well as increase the risk of anxiety, depression, and cardiovascular disease due to chronic stress.');''')
-
-    conn.commit()
     
     # Group 4
-    conn = sqlite3.connect('FAQHealth.db')
-    cursor = conn.cursor()
 
     cursor.execute('''
          INSERT INTO questions (id_group, id_category, pergunta, resposta, question, answer) VALUES
@@ -440,12 +433,8 @@ def insert_questions():
          'pelo menos 8 horas, ou 9-10 horas', 
          'How many many hours of sleep are recommended for teenagers ?', 
          'At least 8 hours, ideally 9–10 hours.');''')
-
-    conn.commit()
     
     # Group 5
-    conn = sqlite3.connect('FAQHealth.db')
-    cursor = conn.cursor()
 
     cursor.execute('''
         INSERT INTO questions (id_group, id_category, pergunta, resposta, question, answer) VALUES
@@ -533,11 +522,7 @@ def insert_questions():
          'What are the main reasons for decreased self-esteem among young people, and at what ages is this most common ?', 
          'Mainly due to concerns about physical appearance, most commonly between the ages of 14 and 17, when young people begin questioning themselves and their identity.');''')
 
-    conn.commit()
-
     # Group 6
-    conn = sqlite3.connect('FAQHealth.db')
-    cursor = conn.cursor()
 
     cursor.execute('''
         INSERT INTO questions (id_group, id_category, pergunta, resposta, question, answer) VALUES
@@ -619,11 +604,7 @@ def insert_questions():
          'What are the main health risks of tobacco vape and illicit substances ?', 
          'They are risks at a physical, respiratory, mental, psychological, social level and puts our lives at risk');''')
 
-    conn.commit()
-
     # Group 7
-    conn = sqlite3.connect('FAQHealth.db')
-    cursor = conn.cursor()
 
     cursor.execute('''
     INSERT INTO questions (id_group, id_category, pergunta, resposta, question, answer) VALUES
@@ -657,11 +638,7 @@ def insert_questions():
          'How do eating routines and supplementation affect performance and sleep ?', 
          'Having 3 to 5 daily meals maintains satiety, energy, and concentration. Late meals (after 9 PM) can impair sleep and digestion as the circadian rhythm slows the body down for "shutdown". Poor sleep increases hunger the next day. Currently, supplementation is recommended even for those who don''t train, focusing on cognitive performance. The goal is to create habits where sweets are occasional, not a weekly routine.');''')
 
-    conn.commit()
-
     # Group 8
-    conn = sqlite3.connect('FAQHealth.db')
-    cursor = conn.cursor()
     
     cursor.execute('''
         INSERT INTO questions (id_group, id_category, pergunta, resposta, question, answer) VALUES
@@ -741,8 +718,12 @@ def insert_questions():
     conn.close()
 
 #create all
-create_tables()
-insert_group()
-insert_categories()
-insert_questions()
 
+try:
+    create_tables()
+    insert_group()
+    insert_categories()
+    insert_questions()
+    print("Base de dados criada com sucesso!")
+except Exception as e:
+    print(f"Erro: {e}")
