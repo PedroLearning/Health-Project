@@ -48,7 +48,6 @@
                     <li><a class="dropdown-item" href="#">Most Relevant</a></li>
                     <li><a class="dropdown-item" href="#">Most Recent</a></li>
                     <li><a class="dropdown-item" href="#">Most Old</a></li>
-                    <li><a class="dropdown-item" href="#">Most Upvoted</a></li>
                 </ul>
             </div>
         </div>
@@ -73,16 +72,20 @@
                 </details>
             </div>
             {% endfor %}
+
+            
             <nav aria-label="Page navigation example">
                 <ul class="pagination justify-content-center">
-                    <li class="page-item disabled">
-                        <a class="page-link">Previous</a>
+                    <li class="page-item {%if current_page == 1%} disabled {%endif%}">
+                        <a class="page-link" href="/?page={{ current_page - 1 }}">Previous</a>
                     </li>
-                    <li class="page-item"><a class="page-link" href="#" onclick="loadQuestions(1)">1</a></li>
-                    <li class="page-item"><a class="page-link" href="#" onclick="loadQuestions(2)">2</a></li>
-                    <li class="page-item"><a class="page-link" href="#" onclick="loadQuestions(3)">3</a></li>
-                    <li class="page-item">
-                        <a class="page-link" href="#">Next</a>
+                    {% for current_page in range(1, total_pages + 1) %}
+                    <li class="page-item {% if page == current_page %}active{% endif%}">
+                        <a class="page-link" href="/?page={{ current_page }}">{{ current_page }}</a>
+                    </li>
+                    {% endfor %}
+                    <li class="page-item {%if current_page == total_pages%} disabled {%endif%}">
+                        <a class="page-link" href="/?page={{ current_page + 1 }}">Next</a>
                     </li>
                 </ul>
             </nav>

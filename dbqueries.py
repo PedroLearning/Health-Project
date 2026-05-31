@@ -11,7 +11,10 @@ def create_connection():
         print(e)
         return None
 
-def get_questions_en():
+def get_questions_en(per_page=25, current_page=1):
+
+    offset = (current_page - 1) * per_page
+
     with sqlite3.connect(DBFILE) as conn:
         cursor = conn.cursor()
         cursor.execute('''
@@ -19,20 +22,17 @@ def get_questions_en():
             FROM questions q
             JOIN groups g ON g.id_group = q.id_group
             JOIN categories c ON c.id_category = q.id_category
-        ''')
+            LIMIT ? OFFSET ?
+        ''', (per_page ,offset,))
         rows = cursor.fetchall()
     return rows
 
-#try:
-    rows = get_questions_en()
-    for question, answer, group, category, votes in rows:
-        print(question)
-        print(answer)
-        print(group)
-        print(category)
-        print(votes)
-#except Exception as e:
-    print(f"An error occurred: {e}")
+def get_count_questions_en():
+    with sqlite3.connect(DBFILE) as conn:
+        cursor = conn.cursor()
+        cursor.execute('SELECT COUNT(*) FROM questions')
+        count = cursor.fetchone()[0]
+    return count
 
 def get_questions_category_en(category_id):
     with sqlite3.connect(DBFILE) as conn:

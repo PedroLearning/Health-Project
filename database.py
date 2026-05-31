@@ -16,6 +16,12 @@ def create_tables():
         grade TEXT DEFAULT NULL);''')
     
     cursor.execute('''
+        CREATE TABLE IF NOT EXISTS users (
+        id_user INTEGER PRIMARY KEY AUTOINCREMENT,
+        username TEXT NOT NULL UNIQUE,
+        password_hash TEXT NOT NULL);''')
+
+    cursor.execute('''
         CREATE TABLE IF NOT EXISTS categories (
         id_category INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL UNIQUE,
