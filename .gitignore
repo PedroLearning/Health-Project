@@ -1,0 +1,9 @@
+.venv-win/
+.venv-mac/
+.venv-orlean/
+.venv-orlean-school/
+.venv-pedro-fabio/
+.venv-pedro-luis/
+.venv-pedro-daniel/
+.DS_Store
+.vscode
