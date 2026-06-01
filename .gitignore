@@ -6,7 +6,7 @@
 .venv-pedro-luis/
 .venv-pedro-daniel/
 .DS_Store
-.vscode
+.vscode/
 Desktop.ini
 .idea/
 __pycache__/
