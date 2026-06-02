@@ -1,9 +1,14 @@
-from flask import Flask, render_template, request, redirect, url_for
-from flask_login import LoginManager, logout, current_user, user_loader
+from flask import Flask, render_template, request, redirect, url_for, flash
+from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user, login_required
+from werkzeug.security import check_password_hash
 from dbqueries import get_questions_en, get_count_questions_en
 import math
 
 app = Flask(__name__)
+
+login_manager = LoginManager()
+login_manager.init_app(app)
+
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
@@ -22,8 +27,12 @@ def home():
     
 @app.route('/login', methods=['GET', 'POST'])
 def login_page():
-    login_manager = LoginManager()
-    
+    if request.method == 'POST':
+        email = request.form.get('email')
+        password = request.form.get('password')
+    if request.method == 'GET':
+        pass
+
     return render_template('loginpage.html', email=email, password=password)
 
 

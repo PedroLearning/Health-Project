@@ -12,7 +12,19 @@ def create_connection():
         return None
 
 def insert_user():
-    
     with sqlite3.connect(DBFILE) as conn:
         cursor = conn.cursor()
+        cursor.execute("INSERT INTO users (username, password_hash) VALUES (?, ?)", ("testuser", "password"))
+        conn.commit()
+        print("Inserted test user")
 
+def get_user():
+    with sqlite3.connect(DBFILE) as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM users")
+        user = cursor.fetchall()
+    return user
+
+insert_user()
+user = get_user()
+print(user)

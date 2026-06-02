@@ -47,4 +47,18 @@ def get_questions_category_en(category_id):
         rows = cursor.fetchall()
     return rows
 
+def get_user_by_username(username):
+    with sqlite3.connect(DBFILE) as conn:
+        cursor = conn.cursor()
+        cursor.execute('SELECT id_user, username, password_hash FROM users WHERE username = ?', (username,))
+        return cursor.fetchone()
+    
+def get_user_by_id(user_id):
+    """Fetches user information based on user ID (needed for Flask-Login sessions)."""
+    with sqlite3.connect(DBFILE) as conn:
+        cursor = conn.cursor()
+        cursor.execute('SELECT id_user, username FROM users WHERE id_user = ?', (user_id,))
+        return cursor.fetchone()
+
+
 #input("Press Enter to exit...")
