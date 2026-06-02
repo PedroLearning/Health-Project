@@ -1,4 +1,5 @@
 import sqlite3
+from werkzeug.security import generate_password_hash
 
 DBFILE = 'FAQHealth.db'
 
@@ -12,11 +13,15 @@ def create_connection():
         return None
 
 def insert_user():
+    # 2. Scramble "password" using Python
+    hashed_password = generate_password_hash("password")
+    
     with sqlite3.connect(DBFILE) as conn:
         cursor = conn.cursor()
-        cursor.execute("INSERT INTO users (username, password_hash) VALUES (?, ?)", ("testuser", "password"))
+        # 3. Save the securely hashed string instead of raw text
+        cursor.execute("INSERT INTO users (username, password_hash) VALUES (?, ?)", ("testuser", hashed_password))
         conn.commit()
-        print("Inserted test user")
+        print("Inserted test user with a secure hash!")
 
 def get_user():
     with sqlite3.connect(DBFILE) as conn:

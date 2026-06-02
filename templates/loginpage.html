@@ -27,10 +27,10 @@
                 <p>Enter your credentials to access your account</p>
             </div>
             
-            <form action="{{url_for('login_page')}}" class="login-form" id="loginForm" novalidate>
+            <form action="{{url_for('login_page')}}" method="POST" class="login-form" id="loginForm" novalidate>
                 <div class="form-group">
                     <div class="input-wrapper">
-                        <input type="email" id="username" name="username" required autocomplete="username">
+                        <input type="text" id="username" name="username" required autocomplete="username">
                         <label for="username">Username</label>
                     </div>
                     <span class="error-message" id="usernameError"></span>
