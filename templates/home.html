@@ -16,9 +16,13 @@
     <main class="container-layout">
         <nav class="nav-bar">
             <h2 class="logo">FAQ</h2>
-            <h2 class="login"><a href="{{ url_for('login_page') }}">LOGIN</a></h2>
+            {% if not current_user.is_authenticated %}
+                <h2 class="register"><a href="{{ url_for('register') }}">REGISTER</a></h2>
+                <h2 class="login"><a href="{{ url_for('login_page') }}">LOGIN</a></h2>
+            {% endif %}
+            
             {% if current_user.is_authenticated %}
-                <h2 class="login"><a href="{{ url_for('logout') }}">LOGOUT</a></h2>
+                <h2 class="register"><a href="{{ url_for('logout') }}">LOGOUT</a></h2>
             {% endif %}
             <div class="lang-selector">
                 <span>ENGLISH</span> <i class="fa-solid fa-chevron-down"></i>

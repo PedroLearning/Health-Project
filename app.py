@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user, login_required
 from werkzeug.security import check_password_hash
-from dbqueries import get_questions_en, get_count_questions_en, get_user_by_username, get_user_by_id
+from dbqueries import get_questions_en, get_count_questions_en, get_user_by_username, get_user_by_email, get_user_by_id, register_user
 import math
 
 app = Flask(__name__)
@@ -47,9 +47,12 @@ def login_page():
     password = ""
 
     if request.method == 'POST':
-        username = request.form.get('username')
+        username_email = request.form.get('username_email')
         password = request.form.get('password')
-        userData = get_user_by_username(username)
+        if get_user_by_username(username_email):
+            userData = get_user_by_username(username_email)
+        elif get_user_by_email(username_email):
+            userData = get_user_by_email(username_email)
 
         if userData and check_password_hash(userData[2], password):
             user_obj = User(id=userData[0], username=userData[1])
@@ -63,7 +66,35 @@ def login_page():
     if request.method == 'GET':
         pass
 
-    return render_template('loginpage.html', username=username, password=password)
+    return render_template('loginpage.html', username_email=username, password=password)
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+
+    if request.method == 'POST':
+        username = request.form.get('username')
+        email = request.form.get('email')
+        password = request.form.get('password')
+        if get_user_by_username(username) or get_user_by_email(email):   
+            flash('Username or email already exists. Please choose a different one.')
+            return render_template('registerpage.html', username=username, email=email, password=password)
+        else:
+            register_user(username, email, password)
+            userData = get_user_by_username(username)
+        if userData:
+            flash('User registered successfully.')
+            user_obj = User(id=userData[0], username=userData[1])
+            login_user(user_obj)
+            return redirect(url_for('home'))
+        else: 
+            flash('Registration failed. Please try again.')
+    
+    if request.method == 'GET':
+        username = ""
+        email = ""
+        password = ""  
+
+    return render_template('registerpage.html', username=username, email=email, password=password)
 
 @app.route('/logout')
 @login_required

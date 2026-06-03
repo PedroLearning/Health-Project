@@ -1,4 +1,5 @@
 import sqlite3
+from werkzeug.security import generate_password_hash
 
 DBFILE = 'FAQHealth.db'
 
@@ -52,13 +53,25 @@ def get_user_by_username(username):
         cursor = conn.cursor()
         cursor.execute('SELECT id_user, username, password_hash FROM users WHERE username = ?', (username,))
         return cursor.fetchone()
-    
+
+def get_user_by_email(email):
+    with sqlite3.connect(DBFILE) as conn:
+        cursor = conn.cursor()
+        cursor.execute('SELECT id_user, email, password_hash FROM users WHERE email = ?', (email,))
+        return cursor.fetchone()
+
+
 def get_user_by_id(user_id):
     """Fetches user information based on user ID (needed for Flask-Login sessions)."""
     with sqlite3.connect(DBFILE) as conn:
         cursor = conn.cursor()
-        cursor.execute('SELECT id_user, username FROM users WHERE id_user = ?', (user_id,))
+        cursor.execute('SELECT id_user, username, email FROM users WHERE id_user = ?', (user_id,))
         return cursor.fetchone()
 
+def register_user(username, email, hashed_password):
+    hashed_password = generate_password_hash("password")
 
-#input("Press Enter to exit...")
+    with sqlite3.connect(DBFILE) as conn:
+        cursor = conn.cursor()
+        cursor.execute('INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)', (username, email, hashed_password,))
+        conn.commit()

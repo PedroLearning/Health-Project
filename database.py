@@ -19,6 +19,7 @@ def create_tables():
         CREATE TABLE IF NOT EXISTS users (
         id_user INTEGER PRIMARY KEY AUTOINCREMENT,
         username TEXT NOT NULL UNIQUE,
+        email TEXT NOT NULL UNIQUE,
         password_hash TEXT NOT NULL);''')
 
     cursor.execute('''

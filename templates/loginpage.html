@@ -30,15 +30,15 @@
             <form action="{{url_for('login_page')}}" method="POST" class="login-form" id="loginForm" novalidate>
                 <div class="form-group">
                     <div class="input-wrapper">
-                        <input type="text" id="username" name="username" required autocomplete="username">
-                        <label for="username">Username</label>
+                        <input type="text" id="username_email" name="username_email" required autocomplete="email" placeholder="Enter your username or email">
+                        <label for="username_email">Username/Email</label>
                     </div>
-                    <span class="error-message" id="usernameError"></span>
+                    <span class="error-message" id="username_emailError"></span>
                 </div>
 
                 <div class="form-group">
                     <div class="input-wrapper password-wrapper">
-                        <input type="password" id="password" name="password" required autocomplete="current-password">
+                        <input type="password" id="password" name="password" required autocomplete="current-password" placeholder="Enter your password">
                         <label for="password">Password</label>
                         <button type="button" class="password-toggle" id="passwordToggle" aria-label="Toggle password visibility">
                             <span class="eye-icon"></span>
@@ -65,7 +65,7 @@
             </form>
 
             <div class="signup-link">
-                <p>Don't have an account? <a href="#">Create one</a></p>
+                <p>Don't have an account? <a href="{{url_for('register')}}">Create one</a></p>
             </div>
 
             <div class="success-message" id="successMessage">

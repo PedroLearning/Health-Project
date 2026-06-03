@@ -12,7 +12,7 @@ def create_connection():
         print(e)
         return None
 
-def insert_user():
+#def insert_user():
     # 2. Scramble "password" using Python
     hashed_password = generate_password_hash("password")
     
@@ -30,6 +30,14 @@ def get_user():
         user = cursor.fetchall()
     return user
 
-insert_user()
+def delete_user():
+    with sqlite3.connect(DBFILE) as conn:
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM users WHERE username = ?", ("testuser",))
+        conn.commit()
+        print("Deleted test user.")
+
 user = get_user()
 print(user)
+#delete_user()
+
