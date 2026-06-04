@@ -1,0 +1,25 @@
+{% for question, answer, group, category, votes in questions %}
+    {% set border_class = "border-gray" %}
+    {% if selected_category == 1 %}{% set border_class = "border-mental" %}
+    {% elif selected_category == 2 %}{% set border_class = "border-sexuality" %}
+    {% elif selected_category == 3 %}{% set border_class = "border-addictive" %}
+    {% elif selected_category == 4 %}{% set border_class = "border-nutrition" %}
+    {% elif selected_category == 5 %}{% set border_class = "border-hygiene" %}
+    {% elif selected_category == 6 %}{% set border_class = "border-sleep" %}
+    {% endif %}
+
+    <div class="faq-card {{ border_class }}" data-bs-toggle="modal" data-bs-target="#modal{{ loop.index }}">
+        <div class="card-body">
+            <span class="category-tag-small">{{ category }}</span>
+            <h3 class="question-text">{{ question }}</h3>
+            <div class="card-footer-info">
+                <span>Group {{ group }}</span>
+                <i class="fa-solid fa-arrow-right"></i>
+            </div>
+        </div>
+    </div>
+{% else %}
+    <div class="text-center w-100 py-5" style="grid-column: 1 / 9;">
+        <p class="text-muted fs-5">No health topics found matching your search.</p>
+    </div>
+{% endfor %}

@@ -52,16 +52,17 @@ def insert_group():
         ('Tomás Castelo, Vasco Machado, Samuel Rodrigues, Walter João e Waldir Milagre ', '2ºJ'),
         ('Ânia, Marta e Tomé', '3ºJ'),
         ('Taissa e Esperança', '3ºJ'),
-        ('Pedro Lopes e Orlean Mpaka', '2ºL'),
         ('Isaac, Lara, Beatriz e Madalena', '3ºJ'),
         ('Diogo , Filipe, Rodrigo e Simão', '3ºJ'),
         ('Luana Santos e Rodrigo Silva', '3ºJ'),
+        ('Pedro Lopes e Orlean Mpaka', '2ºL'),
         ('Maria Meireles, Diego Pernia, Rodrigo Fernandes e Filipa Cruz', '2ºL'),
+        ('Bruno Lucas, Pedro Silva e Santiago Pais', '2ºL'),
+        ('Quévin, Rodrigo, Tiago Nunes, Vitor', '2ºK'),
+        ('António Marques, Henrique Silva, Dinis Gregório e Diogo Seixas', '2ºL'),
         ('Gonçalo Pires, Marcelo Santos, João Gonçalves, Rui Monteiro e Francisco Santos', '2ºL'),          
         ('Rafael Cordeiro, Diego Santos, Henrique Rodrigues, Afonso Pombo, Rodrigo Mendes e Gonçalo Roma', '2ºL'),
-        ('António Marques, Henrique Silva, Dinis Gregório e Diogo Seixas', '2ºL'),
         ('Muhammad Sufyan, Tiago Ussuale, Muhammad Ali e Eduardo Silva', '2ºL'),
-        ('Bruno Lucas, Pedro Silva e Santiago Pais', '2ºL'),
         ('Érica Bispo, Érica Nobre, André Santos e Fidélia Sanca', '2ºJ'),
         ('Afonso Lourenço, Mariana Santos, Evelin Gaigher e Bruno Martins', '2ºJ'),
         ('Dinis Tavares, Mário Manuel, Valdumar Tavares, Manuel Guerreiro e Afonso Ferrão ', '2ºJ'),
@@ -70,7 +71,6 @@ def insert_group():
         ('Jair, Luís, Daniel, Gabriel e Lucca', '2ºJ'),
         ('Lauren, Gonçalo, Diogo e Martim', '2ºK'), 
         ('Ruben, Rafael, Salvador e Tomás', '2ºK'),
-        ('Quévin, Rodrigo, Tiago Nunes, Vitor', '2ºK'),
         ('Nuno, Gonçalo, Paulo Marques, Igor', '3ºJ');
                    ''')
     conn.commit()
@@ -92,11 +92,11 @@ def insert_categories():
 
 def insert_questions():
 
-    #Group 1
     conn = sqlite3.connect('FAQHealth.db')
     cursor = conn.cursor()
-    cursor.execute('''
-        
+
+    #Group 1 By Tomás Castelo, Vasco Machado, Samuel Rodrigues, Walter João e Waldir Milagre
+    cursor.execute('''        
          INSERT INTO questions (id_group, id_category, pergunta, resposta, question, answer) VALUES
         (1, 6, 
          'Quantas horas deve dormir um jovem, por noite, para ter um sono adequado ?', 
@@ -177,7 +177,7 @@ def insert_questions():
          'What strategies will be effective in preventing substance use psychoactive by young people ?', 
          'Avoid environments where there is consumption of psychoactive substances, avoid people who sell the substances and have many activities (being busy): playing basketball, football, extracurricular activities, etc...');''')                
 
-    # Group 2
+    # Group 2 By Ania, Marta e Tomé
     
     cursor.execute('''
         INSERT INTO questions (id_group, id_category, pergunta, resposta, question, answer) VALUES
@@ -271,7 +271,7 @@ def insert_questions():
          'Is it normal to have pain during menstruation in different parts of the body ?', 
          'Yes, pain can be felt in other parts of the body and varies from person to person.');''')
     
-    # Group 3
+    # Group 3 By Taissa e Esperança
 
     cursor.execute('''
         INSERT INTO questions (id_group, id_category, pergunta, resposta, question, answer) VALUES
@@ -347,7 +347,7 @@ def insert_questions():
          'Can toxic romantic relationships cause real physical symptoms ?', 
          'Toxic relationships can cause physical symptoms such as insomnia, headaches, and digestive problems, as well as increase the risk of anxiety, depression, and cardiovascular disease due to chronic stress.');''')
     
-    # Group 4
+    # Group 4 By Isaac, Lara, Beatriz e Madalena
 
     cursor.execute('''
          INSERT INTO questions (id_group, id_category, pergunta, resposta, question, answer) VALUES
@@ -441,7 +441,7 @@ def insert_questions():
          'How many many hours of sleep are recommended for teenagers ?', 
          'At least 8 hours, ideally 9–10 hours.');''')
     
-    # Group 5
+    # Group 5 By Diogo, Filipe, Rodrigo e Simão
 
     cursor.execute('''
         INSERT INTO questions (id_group, id_category, pergunta, resposta, question, answer) VALUES
@@ -529,7 +529,7 @@ def insert_questions():
          'What are the main reasons for decreased self-esteem among young people, and at what ages is this most common ?', 
          'Mainly due to concerns about physical appearance, most commonly between the ages of 14 and 17, when young people begin questioning themselves and their identity.');''')
 
-    # Group 6
+    # Group 6 By Luana Santos e Rodrigo Silva
 
     cursor.execute('''
         INSERT INTO questions (id_group, id_category, pergunta, resposta, question, answer) VALUES
@@ -611,7 +611,7 @@ def insert_questions():
          'What are the main health risks of tobacco vape and illicit substances ?', 
          'They are risks at a physical, respiratory, mental, psychological, social level and puts our lives at risk');''')
 
-    # Group 7
+    # Group 7 By Pedro Lopes e Orlean Mpaka
 
     cursor.execute('''
     INSERT INTO questions (id_group, id_category, pergunta, resposta, question, answer) VALUES
@@ -645,7 +645,7 @@ def insert_questions():
          'How do eating routines and supplementation affect performance and sleep ?', 
          'Having 3 to 5 daily meals maintains satiety, energy, and concentration. Late meals (after 9 PM) can impair sleep and digestion as the circadian rhythm slows the body down for "shutdown". Poor sleep increases hunger the next day. Currently, supplementation is recommended even for those who don''t train, focusing on cognitive performance. The goal is to create habits where sweets are occasional, not a weekly routine.');''')
 
-    # Group 8
+    # Group 8 By Maria Meireles, Diego Pernia, Rodrigo Fernandes, e Filipa Cruz
     
     cursor.execute('''
         INSERT INTO questions (id_group, id_category, pergunta, resposta, question, answer) VALUES

@@ -27,18 +27,23 @@ def load_user(user_id):
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
-    questions = get_questions_en()
-    if request.method == 'POST':
-        pass
-    if request.method == 'GET': 
+    category_id = request.args.get('category', type=int)
+    current_page = request.args.get('page', 1, type=int)
+    per_page = request.args.get('per_page', 20, type=int)
+    sort_by = request.args.get('sort', 'most_relevant')
+    search_query = request.args.get('search', type=str)
 
-        per_page = 25
-        total_questions = get_count_questions_en()
-        total_pages = math.ceil(total_questions / per_page)
-        current_page = int(request.args.get('page', 1))
-        questions = get_questions_en(per_page=per_page, current_page=current_page)
+    total_questions = get_count_questions_en(category_id=category_id, search_query=search_query)
+    total_pages = math.ceil(total_questions / per_page)
+    questions = get_questions_en(per_page=per_page, current_page=current_page,
+                                 category_id=category_id, sort_by=sort_by, search_query=search_query)
+    
+    if request.headers.get('HX-Request'):
+        return render_template('partials/faq_cards.html', questions=questions, selected_category=category_id)
 
-        return render_template('home.html', questions=questions, total_pages=total_pages, current_page=current_page)
+    return render_template('home.html',questions=questions,total_pages=total_pages,
+                           current_page=current_page,selected_category=category_id,
+                           per_page=per_page,sort_by=sort_by)
     
 @app.route('/login', methods=['GET', 'POST'])
 def login_page():
