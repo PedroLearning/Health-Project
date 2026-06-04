@@ -44,24 +44,6 @@ body.modal-open #main-content-wrapper {
     font-weight: 800; 
     color: var(--health-red); 
     font-size: 2.5rem; 
-    margin: 0; 
-}
-
-.nav-bar h2 {
-    margin: 0;
-}
-
-.nav-bar a {
-    color: var(--health-red);
-    text-decoration: none;
-    font-weight: 800;
-    font-size: 1.3rem;
-    margin: 0 15px;
-    transition: opacity 0.2s ease;
-}
-
-.nav-bar a:hover {
-    opacity: 0.8;
 }
 
 .lang-selector {
@@ -74,6 +56,58 @@ body.modal-open #main-content-wrapper {
     background: white;
 }
 
+.logo-link {
+    text-decoration: none; /* Remove underline */
+    color: inherit;        /* Inherit color from original .logo styles */
+    cursor: pointer;       /* Show hand cursor on hover */
+}
+
+/* Style for the Sign Up button */
+.signup-btn {
+    background-color: var(--health-red);
+    color: white;
+    text-decoration: none;
+    padding: 10px 25px;
+    border-radius: 25px;
+    font-weight: 700;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(211, 47, 47, 0.2);
+}
+
+.signup-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(211, 47, 47, 0.3);
+    background-color: #b71c1c; /* Slightly darker red on hover */
+    color: white;
+}
+
+/* Container for authentication links */
+.auth-buttons {
+    display: flex;
+    align-items: center;
+    gap: 25px; /* Space between Login and Sign Up */
+}
+
+/* Style for the Login text link */
+.login-text {
+    text-decoration: none;
+    color: #222;
+    font-weight: 700;
+    font-size: 1.1rem;
+    transition: color 0.2s;
+}
+
+.login-text:hover {
+    color: var(--health-red);
+}
+
+/* Optional: Slight hover effect for the logo */
+.logo-link:hover .logo {
+    opacity: 0.8;
+    transition: opacity 0.2s ease;
+}
+
 /* SEARCH BAR */
 .search-section { 
     grid-column: 2 / 8; 
@@ -84,23 +118,75 @@ body.modal-open #main-content-wrapper {
     position: relative; 
     display: flex; 
     align-items: center; 
+    width: 100%;
 }
 
 .search-input { 
-    width: 100%; 
-    padding: 22px 22px 22px 65px; 
-    border-radius: 50px; 
-    border: 3px solid #eee; 
-    font-weight: 800; 
-    box-shadow: 0 15px 30px rgba(211, 47, 47, 0.1); 
-    outline: none; 
+    width: 100%;
+    padding: 15px 55px 15px 25px; /* Extra padding on the right for the icon */
+    border: 2px solid transparent;
+    border-radius: 30px;
+    background: white;
+    font-size: 1.1rem;
+    font-weight: 500;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    outline: none;
 }
 
 .search-icon { 
-    position: absolute; 
-    left: 25px; 
-    color: var(--health-red); 
-    font-size: 1.5rem; 
+    position: absolute;
+    right: 25px; /* Distance from the right edge */
+    color: #999;
+    font-size: 1.1rem; /* Adjusted size to be more subtle */
+    pointer-events: none; /* Clicks pass through to the input */
+    transition: color 0.3s ease;
+}
+
+.search-input:focus + .search-icon {
+    color: var(--health-red);
+}
+
+.search-dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 2px solid #eee;
+    border-radius: 20px;
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    margin-top: 10px;
+    padding: 10px 0;
+    
+    /* Limit height to approximately 5 items and enable scrolling */
+    max-height: 250px; 
+    overflow-y: auto;
+}
+
+/* Individual item in the dropdown */
+.search-dropdown-item {
+    padding: 12px 25px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: #333;
+    transition: background 0.2s;
+    text-align: left;
+}
+
+.search-dropdown-item:hover {
+    background-color: var(--soft-bg);
+    color: var(--health-red);
+}
+
+/* Styling for the highlighted search term */
+.highlight {
+    background-color: #fee2e2; /* Soft red background */
+    color: var(--health-red);   /* Theme red text color */
+    padding: 0 2px;
+    border-radius: 4px;
 }
 
 /* CATEGORY BUTTONS */

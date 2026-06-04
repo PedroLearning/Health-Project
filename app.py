@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
 from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user, login_required
 from werkzeug.security import check_password_hash
 from dbqueries import get_questions_en, get_count_questions_en, get_user_by_username, get_user_by_email, get_user_by_id, register_user
@@ -25,26 +25,40 @@ def load_user(user_id):
     return None
 
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/', methods=['GET'])
 def home():
     category_id = request.args.get('category', type=int)
     current_page = request.args.get('page', 1, type=int)
     per_page = request.args.get('per_page', 20, type=int)
-    sort_by = request.args.get('sort', 'most_relevant')
-    search_query = request.args.get('search', type=str)
+    sort_by = request.args.get('sort', 'newest')
+    search_query = request.args.get('q', default='')
 
     total_questions = get_count_questions_en(category_id=category_id, search_query=search_query)
     total_pages = math.ceil(total_questions / per_page)
     questions = get_questions_en(per_page=per_page, current_page=current_page,
                                  category_id=category_id, sort_by=sort_by, search_query=search_query)
-    
-    if request.headers.get('HX-Request'):
-        return render_template('partials/faq_cards.html', questions=questions, selected_category=category_id)
 
-    return render_template('home.html',questions=questions,total_pages=total_pages,
-                           current_page=current_page,selected_category=category_id,
-                           per_page=per_page,sort_by=sort_by)
+    return render_template('home.html',questions=questions,
+                           total_pages=total_pages,
+                           current_page=current_page,
+                           selected_category=category_id,
+                           per_page=per_page,
+                           sort_by=sort_by, 
+                           search_query=search_query)
     
+@app.route('/search_autocomplete', methods=['GET'])
+def search_autocomplete():
+    query = request.args.get('q', '')
+    if len(query) < 2: # Do not search for very short strings
+        return jsonify([])
+    
+    # Fetch top 15 matches for the dropdown
+    results = get_questions_en(per_page=15, current_page=1, search_query=query)
+    
+    # Return list of question titles as JSON
+    dropdown_items = [{"question": r[0]} for r in results]
+    return jsonify(dropdown_items)
+
 @app.route('/login', methods=['GET', 'POST'])
 def login_page():
 

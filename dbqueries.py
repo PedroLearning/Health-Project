@@ -12,10 +12,10 @@ def create_connection():
         print(e)
         return None
 
-def get_questions_en(per_page=25, current_page=1, category_id=None, sort_by='most_relevant', search_query=None):
+def get_questions_en(per_page=25, current_page=1, category_id=None, sort_by='newest', search_query=None):
     offset = (current_page - 1) * per_page
-   
-    #SQL sort mapping
+    
+    # Map sort options to SQL order clauses
     sort_mapping = {
         'most_relevant': 'q.votes DESC',
         'oldest': 'q.id_question ASC',
@@ -26,40 +26,49 @@ def get_questions_en(per_page=25, current_page=1, category_id=None, sort_by='mos
 
     with sqlite3.connect(DBFILE) as conn:
         cursor = conn.cursor()
-       
+        
+        # Base query
         sql = '''
-            SELECT q.question, q.answer, g.name, c.name, q.votes
+            SELECT q.question, q.answer, g.name, c.name, q.votes 
             FROM questions q
             JOIN groups g ON g.id_group = q.id_group
             JOIN categories c ON c.id_category = q.id_category
+            WHERE 1=1
         '''
-       
-        if category_id and search_query:
-            query = f"{sql} WHERE q.id_category = ? AND q.question LIKE ? ORDER BY {order_clause} LIMIT ? OFFSET ?"
-            cursor.execute(query, (category_id, f'%{search_query}%', per_page, offset))
-        elif category_id:
-            query = f"{sql} WHERE q.id_category = ? ORDER BY {order_clause} LIMIT ? OFFSET ?"
-            cursor.execute(query, (category_id, per_page, offset))
-        elif search_query:
-            query = f"{sql} WHERE q.question LIKE ? ORDER BY {order_clause} LIMIT ? OFFSET ?"
-            cursor.execute(query, (f'%{search_query}%', per_page, offset))
-        else:
-            query = f"{sql} ORDER BY {order_clause} LIMIT ? OFFSET ?"
-            cursor.execute(query, (per_page, offset))
-           
+        params = []
+        
+        # Filter by category if selected
+        if category_id:
+            sql += " AND q.id_category = ?"
+            params.append(category_id)
+            
+        # Filter by search query if provided
+        if search_query:
+            sql += " AND q.question LIKE ?"
+            params.append(f"%{search_query}%")
+            
+        # Add ordering and pagination
+        sql += f" ORDER BY {order_clause} LIMIT ? OFFSET ?"
+        params.extend([per_page, offset])
+        
+        cursor.execute(sql, tuple(params))
         return cursor.fetchall()
-
+        
 def get_count_questions_en(category_id=None, search_query=None):
     with sqlite3.connect(DBFILE) as conn:
         cursor = conn.cursor()
-        if category_id and search_query:
-            cursor.execute('SELECT COUNT(*) FROM questions WHERE id_category = ? AND question LIKE ?', (category_id, f'%{search_query}%'))
-        elif category_id:
-            cursor.execute('SELECT COUNT(*) FROM questions WHERE id_category = ?', (category_id,))
-        elif search_query:
-            cursor.execute('SELECT COUNT(*) FROM questions WHERE question LIKE ?', (f'%{search_query}%',))
-        else:
-            cursor.execute('SELECT COUNT(*) FROM questions')
+        sql = 'SELECT COUNT(*) FROM questions WHERE 1=1'
+        params = []
+        
+        if category_id:
+            sql += ' AND id_category = ?'
+            params.append(category_id)
+            
+        if search_query:
+            sql += ' AND question LIKE ?'
+            params.append(f"%{search_query}%")
+            
+        cursor.execute(sql, tuple(params))
         return cursor.fetchone()[0]
 
 # Needed for login_user() in app.py
