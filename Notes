@@ -1,0 +1,7 @@
+About Vote System:
+    It's fine, but there is an issue:
+        I can like multiple times if I like (without being logged in), then I log in, like being logged in, 
+        then when I log out and go to like again, the question is not liked and it counts 2. Session Issue
+About Search Bar Wrapper:
+    it's not working, we can do the search but it does not show the wrapper with the hightlighted 
+    words in the question

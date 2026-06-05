@@ -1,4 +1,4 @@
-{% for question, answer, group, category, votes in questions %}
+{% for q_id, question, answer, group, category, votes in questions %}
     {% set border_class = "border-gray" %}
     {% if selected_category == 1 %}{% set border_class = "border-mental" %}
     {% elif selected_category == 2 %}{% set border_class = "border-sexuality" %}

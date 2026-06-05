@@ -205,13 +205,13 @@
         </main>
     </div>
 
-    {% for question, answer, group, category, votes in questions %}
+    {% for q_id, question, answer, group, category, votes in questions %}
     <div class="modal fade" id="modal{{ loop.index }}" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content custom-modal">
                 <div class="modal-header border-0">
                     <h5 class="modal-title fw-bold text-danger">Question Detail</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss=\"modal\" aria-label="Close"></button>
                 </div>
                 <div class="modal-body text-center px-5">
                     <h2 class="mb-4 fw-800">{{ question }}</h2>
@@ -220,8 +220,20 @@
                 </div>
                 <div class="modal-footer border-0 justify-content-between px-5 pb-4">
                     <span class="text-muted">By: Group {{ group }} | {{ category }}</span>
-                    <button class="btn btn-sm btn-outline-danger rounded-pill px-3">
-                        <i class="fa-solid fa-thumbs-up"></i> {{ votes }} Helpful
+                    
+                    {% if current_user.is_authenticated %}
+                        {% set session_key = 'liked_questions_' ~ current_user.id %}
+                    {% else %}
+                        {% set session_key = 'liked_questions_anonymous' %}
+                    {% endif %}
+                    
+                    {% set is_liked = false %}
+                    {% if session[session_key] and q_id in session[session_key] %}
+                        {% set is_liked = true %}
+                    {% endif %}
+
+                    <button class="btn btn-sm {{ 'btn-danger' if is_liked else 'btn-outline-danger' }} rounded-pill px-3 vote-btn" data-question-id="{{ q_id }}">
+                        <i class="fa-solid fa-thumbs-up"></i> <span class="vote-count">{{ votes }}</span> This was Helpful
                     </button>
                 </div>
             </div>
@@ -230,66 +242,110 @@
     {% endfor %}
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    
     <script>
     document.addEventListener('DOMContentLoaded', function() {
-    const searchInput = document.querySelector('.search-input');
-    const dropdown = document.getElementById('search-dropdown');
-    const searchForm = document.getElementById('searchForm');
+        const searchInput = document.getElementById('search-input');
+        const dropdown = document.getElementById('search-dropdown');
+        const searchForm = document.getElementById('search-form');
 
-    // Listen for typing in the search box
-    searchInput.addEventListener('input', function() {
-        const query = this.value.trim();
-        
-        // Hide dropdown if input is too short
-        if (query.length < 2) {
-            dropdown.innerHTML = '';
-            dropdown.style.display = 'none';
-            return;
-        }
-
-        // Fetch matching questions from the server
-        fetch(`/search_autocomplete?q=${encodeURIComponent(query)}`)
-            .then(response => response.json())
-            .then(data => {
-                dropdown.innerHTML = '';
-                
-                if (data.length === 0) {
-                    dropdown.innerHTML = '<div class="search-dropdown-item text-muted">No results found</div>';
-                    dropdown.style.display = 'block';
+        // Lógica do Autocomplete de busca (se mantiver ativo)
+        if (searchInput) {
+            searchInput.addEventListener('input', function() {
+                const query = this.value.trim();
+                if (query.length < 2) {
+                    dropdown.style.display = 'none';
                     return;
                 }
-
-                data.forEach(item => {
-                    const div = document.createElement('div');
-                    div.className = 'search-dropdown-item';
-                    
-                    // Highlight the matching part of the string (case insensitive)
-                    const regex = new RegExp(`(${query})`, 'gi');
-                    const highlightedText = item.question.replace(regex, '<span class="highlight">$1</span>');
-                    
-                    div.innerHTML = highlightedText;
-                    
-                    // Handle clicking a dropdown item
-                    div.addEventListener('click', function() {
-                        searchInput.value = item.question;
-                        dropdown.style.display = 'none';
-                        searchForm.submit(); // Submit the form to show full results
-                    });
-                    
-                    dropdown.appendChild(div);
-                });
                 
-                dropdown.style.display = 'block';
-            });
-    });
+                fetch('/search_autocomplete?q=' + encodeURIComponent(query))
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Erro na resposta do servidor: ' + response.status);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        dropdown.innerHTML = ''; // Limpa o dropdown antigo
+                        
+                        if (data.length === 0) {
+                            dropdown.innerHTML = '<div class="search-dropdown-item no-results">No results found</div>';
+                            dropdown.style.display = 'block';
+                            return;
+                        }
 
-    // Close dropdown when clicking outside
-    document.addEventListener('click', function(e) {
-        if (!searchInput.contains(e.target) && !dropdown.contains(e.target)) {
-            dropdown.style.display = 'none';
+                        data.forEach(item => {
+                            const div = document.createElement('div');
+                            div.className = 'search-dropdown-item';
+                            
+                            // Realça o termo pesquisado (highlight)
+                            const regex = new RegExp(`(${query})`, 'gi');
+                            const highlightedText = item.question.replace(regex, '<span class="highlight">$1</span>');
+                            
+                            div.innerHTML = highlightedText;
+                            
+                            // Ao clicar na sugestão, preenche e submete
+                            div.addEventListener('click', function() {
+                                searchInput.value = item.question;
+                                dropdown.style.display = 'none';
+                                searchForm.submit(); 
+                            });
+                            
+                            dropdown.appendChild(div);
+                        });
+                        
+                        dropdown.style.display = 'block'; // Mostra o wrapper
+                    })
+                    .catch(error => {
+                        console.error('Erro no Autocomplete:', error);
+                    });         
+            });
         }
+
+        if (dropdown) {
+            document.addEventListener('click', function(e) {
+                if (!searchInput.contains(e.target) && !dropdown.contains(e.target)) {
+                    dropdown.style.display = 'none';
+                }
+            });
+        }
+
+        document.querySelectorAll('.vote-btn').forEach(button => {
+            button.addEventListener('click', function(e) {
+                // Pega o id correto da pergunta que está no data-question-id
+                const questionId = this.getAttribute('data-question-id');
+                const voteCountSpan = this.querySelector('.vote-count');
+                let currentVotes = parseInt(voteCountSpan.textContent);
+
+                fetch('/vote', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ question_id: questionId })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        if (data.action === 'liked') {
+                            // Se curtiu, muda o botão para vermelho cheio e soma 1
+                            this.classList.remove('btn-outline-danger');
+                            this.classList.add('btn-danger');
+                            voteCountSpan.textContent = currentVotes + 1;
+                        } else {
+                            // Se descurtiu, volta o botão para vazado e subtrai 1
+                            this.classList.remove('btn-danger');
+                            this.classList.add('btn-outline-danger');
+                            voteCountSpan.textContent = currentVotes - 1;
+                        }
+                    }
+                })
+                .catch(error => console.error('Error processing vote:', error));
+            });
+        });
     });
-});
     </script>
+
+    
 </body>
 </html>
