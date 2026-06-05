@@ -152,17 +152,14 @@ body.modal-open #main-content-wrapper {
     top: 100%;
     left: 0;
     right: 0;
-    background: white;
-    border: 2px solid #eee;
-    border-radius: 20px;
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
-    margin-top: 10px;
-    padding: 10px 0;
-    
-    /* Limit height to approximately 5 items and enable scrolling */
-    max-height: 250px; 
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    max-height: 250px;
     overflow-y: auto;
+    z-index: 9999; /* Garante que fica visível acima de tudo */
+    margin-top: 5px;
 }
 
 /* Individual item in the dropdown */

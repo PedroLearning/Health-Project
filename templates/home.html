@@ -37,12 +37,12 @@
             </nav>
 
             <section class="search-section">
-                <form method="GET" action="/" id="searchForm" class="w-100">
+                <form method="GET" action="/" id="search-form" class="w-100">
                     {% if selected_category %}<input type="hidden" name="category" value="{{ selected_category }}">{% endif %}
                     <input type="hidden" name="sort" value="{{ sort_by }}">
                     
-                    <div class="search-wrapper">
-                        <input type="text" name="q" placeholder="Search for health topics..." 
+                    <div class="search-wrapper" style="position: relative;">
+                        <input type="text" name="q" id="search-input" placeholder="Search for health topics..." 
                             class="search-input" value="{{ search_query }}" autocomplete="off">
                         <i class="fa-solid fa-magnifying-glass search-icon"></i>
                         
@@ -249,8 +249,8 @@
         const dropdown = document.getElementById('search-dropdown');
         const searchForm = document.getElementById('search-form');
 
-        // Lógica do Autocomplete de busca (se mantiver ativo)
-        if (searchInput) {
+        // Lógica do Autocomplete de busca
+        if (searchInput && dropdown && searchForm) {
             searchInput.addEventListener('input', function() {
                 const query = this.value.trim();
                 if (query.length < 2) {
@@ -266,27 +266,37 @@
                         return response.json();
                     })
                     .then(data => {
-                        dropdown.innerHTML = ''; // Limpa o dropdown antigo
+                        console.log("1. Dados brutos recebidos do Flask:", data);
                         
-                        if (data.length === 0) {
+                        dropdown.innerHTML = ''; 
+                        
+                        if (!data || data.length === 0) {
+                            console.log("2. Nenhum resultado encontrado no banco para:", query);
                             dropdown.innerHTML = '<div class="search-dropdown-item no-results">No results found</div>';
                             dropdown.style.display = 'block';
                             return;
                         }
 
                         data.forEach(item => {
+                            console.log("3. Processando item:", item);
+                            
+                            const textToHighlight = item.question || item.text || (typeof item === 'string' ? item : '');
+                            
+                            if (!textToHighlight) {
+                                console.error("Erro: O item não possui texto legível", item);
+                                return;
+                            }
+
                             const div = document.createElement('div');
                             div.className = 'search-dropdown-item';
                             
-                            // Realça o termo pesquisado (highlight)
                             const regex = new RegExp(`(${query})`, 'gi');
-                            const highlightedText = item.question.replace(regex, '<span class="highlight">$1</span>');
+                            const highlightedText = textToHighlight.replace(regex, '<span class="highlight">$1</span>');
                             
                             div.innerHTML = highlightedText;
                             
-                            // Ao clicar na sugestão, preenche e submete
                             div.addEventListener('click', function() {
-                                searchInput.value = item.question;
+                                searchInput.value = textToHighlight;
                                 dropdown.style.display = 'none';
                                 searchForm.submit(); 
                             });
@@ -294,25 +304,27 @@
                             dropdown.appendChild(div);
                         });
                         
-                        dropdown.style.display = 'block'; // Mostra o wrapper
+                        console.log("4. Exibindo o dropdown na tela!");
+                        dropdown.style.display = 'block';
                     })
                     .catch(error => {
-                        console.error('Erro no Autocomplete:', error);
-                    });         
+                        console.error('Erro crítico no processo do Autocomplete:', error);
+                    });
             });
         }
 
+        // Fecha o dropdown ao clicar fora
         if (dropdown) {
             document.addEventListener('click', function(e) {
-                if (!searchInput.contains(e.target) && !dropdown.contains(e.target)) {
+                if (searchInput && !searchInput.contains(e.target) && !dropdown.contains(e.target)) {
                     dropdown.style.display = 'none';
                 }
             });
         }
 
+        // Sistema de Votação (Votos/Likes)
         document.querySelectorAll('.vote-btn').forEach(button => {
             button.addEventListener('click', function(e) {
-                // Pega o id correto da pergunta que está no data-question-id
                 const questionId = this.getAttribute('data-question-id');
                 const voteCountSpan = this.querySelector('.vote-count');
                 let currentVotes = parseInt(voteCountSpan.textContent);
@@ -328,12 +340,10 @@
                 .then(data => {
                     if (data.status === 'success') {
                         if (data.action === 'liked') {
-                            // Se curtiu, muda o botão para vermelho cheio e soma 1
                             this.classList.remove('btn-outline-danger');
                             this.classList.add('btn-danger');
                             voteCountSpan.textContent = currentVotes + 1;
                         } else {
-                            // Se descurtiu, volta o botão para vazado e subtrai 1
                             this.classList.remove('btn-danger');
                             this.classList.add('btn-outline-danger');
                             voteCountSpan.textContent = currentVotes - 1;
@@ -345,7 +355,5 @@
         });
     });
     </script>
-
-    
 </body>
 </html>

@@ -24,7 +24,6 @@ def load_user(user_id):
         return User(id=userData[0], username=userData[1])
     return None
 
-
 @app.route('/', methods=['GET'])
 def home():
     category_id = request.args.get('category', type=int)
@@ -36,28 +35,29 @@ def home():
     total_questions = get_count_questions_en(category_id=category_id, search_query=search_query)
     total_pages = math.ceil(total_questions / per_page)
     questions = get_questions_en(per_page=per_page, current_page=current_page,
-                                 category_id=category_id, sort_by=sort_by, search_query=search_query)
+                                    category_id=category_id, sort_by=sort_by, search_query=search_query)
 
     return render_template('home.html',questions=questions,
-                           total_pages=total_pages,
-                           current_page=current_page,
-                           selected_category=category_id,
-                           per_page=per_page,
-                           sort_by=sort_by, 
-                           search_query=search_query)
+                            total_pages=total_pages,
+                            current_page=current_page,
+                            selected_category=category_id,
+                            per_page=per_page,
+                            sort_by=sort_by, 
+                            search_query=search_query)
     
 @app.route('/search_autocomplete', methods=['GET'])
 def search_autocomplete():
-    query = request.args.get('q', '')
-    if len(query) < 2: # Não pesquisa textos muito curtos
+    query = request.args.get('q', '').strip()
+    if len(query) < 2:
         return jsonify([])
+
+    from dbqueries import get_questions_en
+    # Busca os dados no banco de dados baseados no termo digitado
+    matching_questions = get_questions_en(per_page=5, current_page=1, search_query=query)
     
-    # Procura os 15 primeiros resultados correspondentes
-    results = get_questions_en(per_page=15, current_page=1, search_query=query)
-    
-    # r[1] é o texto da pergunta (visto que o r[0] passou a ser o id_question)
-    dropdown_items = [{"question": r[1]} for r in results]
-    return jsonify(dropdown_items)
+    # IMPORTANTE: q[1] é a pergunta em texto (ex: "What is anxiety?"). q[0] é apenas o ID numérico.
+    results = [{'id': q[0], 'question': q[1]} for q in matching_questions]
+    return jsonify(results)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login_page():
