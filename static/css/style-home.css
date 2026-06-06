@@ -369,3 +369,99 @@ body.modal-open #main-content-wrapper {
     opacity: 0.6; 
     font-size: 0.9rem !important; 
 }
+
+/* ==========================================================================
+   CARROSSEL AJUSTADO (CONFORME O SEU DESIGN)
+   ========================================================================== */
+
+.quote-area {
+    grid-column: 1 / 9;
+    margin-top: 40px;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+/* O Cartão Flutuante Principal */
+.flying-card {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px);
+    border-radius: 24px;
+    padding: 30px 40px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    position: relative;
+    min-height: 200px; /* Altura mínima estável */
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Garante o alinhamento vertical */
+}
+
+/* Cabeçalho: Alinha Foto e Nome lado a lado na horizontal */
+.card-header-quote {
+    display: flex;
+    align-items: center;
+    gap: 15px; /* Espaço entre a foto e o nome */
+    margin-bottom: 20px;
+}
+
+/* Foto estilo Perfil do WhatsApp */
+.doctor-photo {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%; /* Círculo perfeito */
+    object-fit: cover; /* Corta e foca no centro da foto automaticamente */
+    border: 2px solid var(--health-red);
+    flex-shrink: 0; /* Impede que seja esmagada */
+}
+
+/* Nome do Médico */
+.doctor-name {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #333;
+}
+
+/* O Texto da Citação */
+.quote-text {
+    font-size: 1.15rem;
+    line-height: 1.6;
+    color: #444;
+    font-style: italic;
+    margin: 0;
+    font-weight: 500;
+}
+
+/* Barra de progresso discreta no topo do cartão */
+.progress-loader {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 4px;
+    background: var(--health-red);
+    width: 0;
+    border-top-left-radius: 24px;
+    animation: loadProgress 5s linear infinite;
+}
+
+@keyframes loadProgress {
+    from { width: 0; }
+    to { width: 100%; }
+}
+
+/* Indicadores inferiores do carrossel (os pequenos traços) */
+.custom-indicators {
+    bottom: -35px !important; /* Move os traços para fora e abaixo do cartão */
+}
+
+.custom-indicators button {
+    background-color: #ccc !important;
+    width: 10px !important;
+    height: 10px !important;
+    border-radius: 50% !important; /* Transforma os traços em bolinhas limpas */
+    border: none !important;
+    margin: 0 5px !important;
+}
+
+.custom-indicators .active {
+    background-color: var(--health-red) !important;
+}

@@ -31,6 +31,12 @@
                 {% if current_user.is_authenticated %}
                     <h2 class="register"><a href="{{ url_for('logout') }}">LOGOUT</a></h2>
                 {% endif %}
+
+                {% if role == 1 %}
+                    <h2 class="login-text"><a href="{{ url_for('menu_users') }}">MANAGE USERS</a></h2>
+                {% endif %}
+
+
                 <div class="lang-selector">
                     <span>ENGLISH</span> <i class="fa-solid fa-chevron-down"></i>
                 </div>
@@ -162,36 +168,40 @@
                         <button type="button" data-bs-target="#quoteCarousel" data-bs-slide-to="2"></button>
                     </div>
                     <div class="carousel-inner">
+                        
                         <div class="carousel-item active">
                             <div class="flying-card">
                                 <div class="progress-loader"></div> 
                                 <div class="card-header-quote">
-                                    <img src="https://i.pravatar.cc/150?u=doc1" alt="Doctor" class="doctor-photo">
-                                    <span class="doctor-name">Dr. Maria Silva</span>
+                                    <img src="{{ url_for('static', filename='doctor.png') }}" alt="Doctor" class="doctor-photo" onerror="this.src='https://i.pravatar.cc/150?u=doc1'">
+                                    <span class="doctor-name">Dr. Ativa na USF Lavradio</span>
                                 </div>
-                                <p class="quote-text">"Os estudo de agora tem mostrado que qualquer pessoa pode e deve suplementar mesmo que não treine, precisamente pelo desenvolvimento do desempenho cognitívo, pode ter desempneho cognitivo."</p>
+                                <p class="quote-text">"Os estudo de agora tem mostrado que qualquer pessoa pode e deve suplementar mesmo que não treine, precisamente pelo desenvolvimento do desempenho cognitívo."</p>
                             </div>
                         </div>
+
                         <div class="carousel-item">
                             <div class="flying-card">
                                 <div class="progress-loader"></div>
                                 <div class="card-header-quote">
                                     <img src="https://i.pravatar.cc/150?u=doc2" alt="Doctor" class="doctor-photo">
-                                    <span class="doctor-name">Dr. Antti Virtanen</span>
+                                    <span class="doctor-name">Dr. Clara Vasconcelos</span>
                                 </div>
-                                <p class="quote-text">"The principal cause of death is cardiovascular disease. Habits where sugar is the exception are the best investment for your life."</p>
+                                <p class="quote-text">"Uma alimentação equilibrada e a prevenção ativa são os pilares fundamentais da longevidade. Investir em pequenos hábitos saudáveis hoje evita a maioria das condições crónicas de amanhã."</p>
                             </div>
                         </div>
+
                         <div class="carousel-item">
                             <div class="flying-card">
                                 <div class="progress-loader"></div>
                                 <div class="card-header-quote">
                                     <img src="https://i.pravatar.cc/150?u=doc3" alt="Doctor" class="doctor-photo">
-                                    <span class="doctor-name">Dr. Pekka Korhonen</span>
+                                    <span class="doctor-name">Dr. André Silva</span>
                                 </div>
-                                <p class="quote-text">"Muscle mass is your metabolic engine. Protect your joints and your future by staying active today."</p>
+                                <p class="quote-text">"A saúde mental e a qualidade do sono não são fatores secundários. Um cérebro descansado e um estado emocional em equilíbrio regulam diretamente o nosso sistema imunitário e resiliência física."</p>
                             </div>
                         </div>
+
                     </div>
                 </div>
             </section>
@@ -211,7 +221,7 @@
             <div class="modal-content custom-modal">
                 <div class="modal-header border-0">
                     <h5 class="modal-title fw-bold text-danger">Question Detail</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss=\"modal\" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body text-center px-5">
                     <h2 class="mb-4 fw-800">{{ question }}</h2>
@@ -245,6 +255,12 @@
     
     <script>
     document.addEventListener('DOMContentLoaded', function() {
+        new bootstrap.Carousel(document.getElementById('quoteCarousel'), {
+            interval: 5000, // Tempo em milissegundos (5 segundos por slide)
+            ride: 'carousel'
+        });
+
+
         const searchInput = document.getElementById('search-input');
         const dropdown = document.getElementById('search-dropdown');
         const searchForm = document.getElementById('search-form');

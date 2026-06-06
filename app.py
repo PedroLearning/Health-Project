@@ -1,7 +1,8 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, session
 from flask_login import LoginManager, UserMixin, login_user, logout_user, current_user, login_required
 from werkzeug.security import check_password_hash
-from dbqueries import get_questions_en, get_count_questions_en, update_question_votes, get_user_by_username, get_user_by_email, get_user_by_id, register_user
+from dbqueries import get_questions_en, get_count_questions_en, get_role_current_user, update_question_votes, get_user_by_username, get_user_by_email, get_user_by_id, register_user
+import sqlite3
 import math
 
 app = Flask(__name__)
@@ -26,6 +27,8 @@ def load_user(user_id):
 
 @app.route('/', methods=['GET'])
 def home():
+
+    #For Questions
     category_id = request.args.get('category', type=int)
     current_page = request.args.get('page', 1, type=int)
     per_page = request.args.get('per_page', 20, type=int)
@@ -36,6 +39,14 @@ def home():
     total_pages = math.ceil(total_questions / per_page)
     questions = get_questions_en(per_page=per_page, current_page=current_page,
                                     category_id=category_id, sort_by=sort_by, search_query=search_query)
+    
+    #For dynamic NavBar
+    if current_user.is_authenticated: 
+        user_id = current_user.id
+        role_data = get_role_current_user(user_id)
+        role = role_data[0] if role_data else 2
+    else:
+        role = 2
 
     return render_template('home.html',questions=questions,
                             total_pages=total_pages,
@@ -43,7 +54,8 @@ def home():
                             selected_category=category_id,
                             per_page=per_page,
                             sort_by=sort_by, 
-                            search_query=search_query)
+                            search_query=search_query,
+                            role=role)
     
 @app.route('/search_autocomplete', methods=['GET'])
 def search_autocomplete():
@@ -75,8 +87,13 @@ def login_page():
         else:
             userData = None
             redirect(url_for('login_page'))
-            flash('Invalid username or password.')
+            flash('Invalid username/email')
             flash('Try again!')
+
+        if userData[3] == 2:
+            flash('Deactivated account')
+            flash('Contact our support!')
+            return redirect(url_for('login_page'))
 
         if userData and check_password_hash(userData[2], password):
             user_obj = User(id=userData[0], username=userData[1])
@@ -127,6 +144,96 @@ def logout():
     session.clear()
     flash('Logged out successfully.')
     return redirect(url_for('home'))
+
+@app.route('/menu_users', methods=['GET', 'POST'])
+@login_required
+def menu_users():
+
+    def get_users_for_edit():    
+        with sqlite3.connect('FAQHealth.db') as conn:
+            cursor = conn.cursor()
+            cursor.execute('''
+            SELECT id_user, username, email, r.id_role, u.id_status, s.status_name 
+            FROM users u
+            JOIN status s ON s.id_status = u.id_status
+            JOIN roles r ON r.id_role = u.id_role''')
+            return cursor.fetchall()
+
+    users = get_users_for_edit()
+
+    return render_template('menu_users.html', users=users)
+
+#Change Status
+@app.route('/admin/change_status', methods=['POST'])
+@login_required
+def change_status():
+    data = request.get_json()
+    user_id = data.get('user_id')
+    target_status = data.get('target_status') # 1 or 2
+    
+    if target_status not in [1, 2]:
+        return jsonify({'status': 'error', 'message': 'Invalid status choice'}), 400
+        
+    try:
+        import sqlite3
+        with sqlite3.connect('FAQHealth.db') as conn:
+            cursor = conn.cursor()
+            cursor.execute('''
+                UPDATE users 
+                SET id_status = ? 
+                WHERE id_user = ?
+            ''', (target_status, user_id))
+            conn.commit()
+            
+        # Define structural text and rules for the next click cycle
+        # Status 1 = Active, Status 2 = Inactive (as defined in your status table)
+        status_name = "Active" if target_status == 1 else "Inactive"
+        next_status = 2 if target_status == 1 else 1
+        
+        return jsonify({
+            'status': 'success',
+            'current_status': target_status,
+            'next_status': next_status,
+            'status_name': status_name
+        })
+        
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)}), 500
+
+
+@app.route('/update_user', methods=['GET', 'POST'])
+@login_required
+def update_user():
+    if request.method == 'POST':
+        user_id = request.form.get('id')
+        username = request.form.get('username')
+        email = request.form.get('email')
+        role_id = request.form.get('role') # Extract numeric index from select dropdown string
+
+        # Security Fallback: If role_id was disabled by JS (e.g. for user 1 or 2), 
+        # standard forms won't submit it. We verify or preserve its active database layout
+        if not role_id and (user_id == "1" or user_id == "2"):
+            role_id = 1 # Force retention of Admin privileges on crucial core accounts
+
+        try:
+            with sqlite3.connect('FAQHealth.db') as conn:
+                cursor = conn.cursor()
+                # Run complete parameter tuple array assignment sequencing matching your DB columns
+                cursor.execute('''
+                    UPDATE users
+                    SET username = ?, email = ?, id_role = ?
+                    WHERE id_user = ?
+                ''', (username, email, role_id, user_id))
+                conn.commit()
+                flash('User updated successfully!')
+        except Exception as e:
+            flash(f'Error updating user: {e}')
+            print(f'Database update exception: {e}')
+        
+        # Standard loopback redirect to refresh UI views safely
+        return redirect(url_for('menu_users'))
+        
+    return redirect(url_for('menu_users'))
 
 @app.route('/vote', methods=['POST'])
 def vote():

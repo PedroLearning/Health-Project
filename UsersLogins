@@ -1,4 +1,9 @@
-Login 1:
-username: testuser
-email: testuser@aesa.edu.pt
-password: password
+Login Pedro Admin:
+username: pedro.lopes
+email: pedro.lopes@aesa.edu.pt
+password: pedro123%
+
+Login Orlean Admin:
+username: orlean.mpaka
+email: orlean.mpaka@aesa.edu.pt
+password: orlean123%

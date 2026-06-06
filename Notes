@@ -2,5 +2,3 @@ About Vote System:
     It's fine, but there is an issue:
         I can like multiple times if I like (without being logged in), then I log in, like being logged in, 
         then when I log out and go to like again, the question is not liked and it counts 2. Session Issue
-About the Modal:
-    When I click in the "X" to close, it does not work

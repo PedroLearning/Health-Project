@@ -29,7 +29,7 @@ def get_questions_en(per_page=25, current_page=1, category_id=None, sort_by='new
         
         # Base query
         sql = '''
-            SELECT q.id_question,q.question, q.answer, g.name, c.name, q.votes 
+            SELECT q.id_question, q.question, q.answer, g.name, c.name, q.votes 
             FROM questions q
             JOIN groups g ON g.id_group = q.id_group
             JOIN categories c ON c.id_category = q.id_category
@@ -71,6 +71,13 @@ def get_count_questions_en(category_id=None, search_query=None):
         cursor.execute(sql, tuple(params))
         return cursor.fetchone()[0]
     
+def get_role_current_user(id):
+    with sqlite3.connect(DBFILE) as conn:
+        cursor = conn.cursor()
+        cursor.execute('''
+            SELECT id_role FROM users WHERE id_user = ?''', (id,))
+        return cursor.fetchone()
+    
 # Needed for voting in app.py
 def update_question_votes(question_id, amount):
     with sqlite3.connect(DBFILE) as conn:
@@ -82,14 +89,14 @@ def update_question_votes(question_id, amount):
 def get_user_by_username(username):
     with sqlite3.connect(DBFILE) as conn:
         cursor = conn.cursor()
-        cursor.execute('SELECT id_user, username, password_hash FROM users WHERE username = ?', (username,))
+        cursor.execute('SELECT id_user, username, password_hash, id_status FROM users WHERE username = ?', (username,))
         return cursor.fetchone()
 
 # Needed for login_user() in app.py
 def get_user_by_email(email):
     with sqlite3.connect(DBFILE) as conn:
         cursor = conn.cursor()
-        cursor.execute('SELECT id_user, email, password_hash FROM users WHERE email = ?', (email,))
+        cursor.execute('SELECT id_user, email, password_hash, id_status FROM users WHERE email = ?', (email,))
         return cursor.fetchone()
 
 # Needed for login_user() in app.py

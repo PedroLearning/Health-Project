@@ -27,8 +27,7 @@ def get_user():
     with sqlite3.connect(DBFILE) as conn:
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM users")
-        user = cursor.fetchall()
-    return user
+    return cursor.fetchall()
 
 def delete_user():
     with sqlite3.connect(DBFILE) as conn:
@@ -43,11 +42,19 @@ def show_count_likes(question):
         cursor.execute("SELECT votes FROM questions WHERE question = ?", (question,))
     return cursor.fetchone()
 
-counter = show_count_likes("What is a hangover? How to avoid it and how to solve it ?")
-print(counter)
-counter2 = show_count_likes("How many alcoholic drinks per week are considered safe for a woman and a man ?")
-print(counter2)
-#user = get_user()
-#print(user)
+def get_role_current_user():
+    with sqlite3.connect(DBFILE) as conn:
+        cursor = conn.cursor()
+        cursor.execute('''
+            SELECT id_role FROM users WHERE id_user = 1''')
+        return cursor.fetchone()
+
+#counter = show_count_likes("What is a hangover? How to avoid it and how to solve it ?")
+#print(counter)
+#counter2 = show_count_likes("How many alcoholic drinks per week are considered safe for a woman and a man ?")
+#print(counter2)
+user = get_user()
+role_id_1 = get_role_current_user()
+print(user)
 #delete_user()
 

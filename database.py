@@ -1,4 +1,5 @@
 import sqlite3
+from werkzeug.security import generate_password_hash
 
 conn = sqlite3.connect('FAQHealth.db')
 conn.execute("PRAGMA foreign_keys = ON")
@@ -16,11 +17,26 @@ def create_tables():
         grade TEXT DEFAULT NULL);''')
     
     cursor.execute('''
+        CREATE TABLE IF NOT EXISTS status (
+        id_status INTEGER PRIMARY KEY AUTOINCREMENT,
+        status_name TEXT NOT NULL);''')
+    
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS roles (
+        id_role INTEGER PRIMARY KEY AUTOINCREMENT,
+        role_name TEXT NOT NULL);''')
+    
+    cursor.execute('''
         CREATE TABLE IF NOT EXISTS users (
         id_user INTEGER PRIMARY KEY AUTOINCREMENT,
         username TEXT NOT NULL UNIQUE,
         email TEXT NOT NULL UNIQUE,
-        password_hash TEXT NOT NULL);''')
+        password_hash TEXT NOT NULL,
+        role TEXT NOT NULL DEFAULT 'guest' CHECK(role IN ('admin', 'moderator', 'guest')), 
+        id_status INTEGER DEFAULT 1,
+        id_role INTEGER DEFAULT 2,
+        FOREIGN KEY (id_status) REFERENCES status(id_status),
+        FOREIGN KEY (id_role) REFERENCES roles(id_role));''')
 
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS categories (
@@ -38,8 +54,40 @@ def create_tables():
         pergunta TEXT,
         resposta TEXT,
         votes INTEGER DEFAULT 0,
+        is_liked BOOLEAN DEFAULT FALSE,
         FOREIGN KEY (id_category) REFERENCES categories(id_category),
         FOREIGN KEY (id_group) REFERENCES groups(id_group));''')
+    
+    conn.commit()
+    conn.close()
+
+
+
+def insert_status_roles():
+    conn = sqlite3.connect('FAQHealth.db')
+    cursor = conn.cursor()
+    cursor.execute('''
+        INSERT INTO status (status_name) VALUES ('Active'), ('Inactive');''')
+    cursor.execute('''
+        INSERT INTO roles (role_name) VALUES ('Admin'), ('Guest');''')
+    conn.commit()
+    conn.close()
+
+def insert_admin():
+    conn = sqlite3.connect('FAQHealth.db')
+    cursor = conn.cursor()
+    
+    password_pedro = generate_password_hash('pedro123%')
+    password_orlean = generate_password_hash('orlean123%')
+    
+    cursor.execute('''
+        INSERT INTO users (username, email, password_hash, id_role) VALUES
+        (?, ?, ?, ?),
+        (?, ?, ?, ?)
+    ''', (
+        'pedro.lopes', 'pedro.lopes@aesa.edu.pt', password_pedro, 1,
+        'orlean.mpaka', 'orlean.mpaka@aesa.edu.pt', password_orlean, 1,
+    ))
     
     conn.commit()
     conn.close()
@@ -728,6 +776,8 @@ def insert_questions():
 
 try:
     create_tables()
+    insert_status_roles()
+    insert_admin()
     insert_group()
     insert_categories()
     insert_questions()
